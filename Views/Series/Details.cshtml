@@ -1,0 +1,65 @@
+﻿@model BootFlixBC7.Models.Serie
+
+@*@model BootFlixBC7.Models.Serie*@
+
+@{
+        ViewBag.Title = "Details";
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+<h2>@Model.Name</h2>
+
+    <h2>Serie Details</h2> 
+    <ul>
+        <li>
+            Genre : @Model.Genre.Name
+        </li>
+        <li>
+            Release Date : @Model.ReleaseDate.Value.ToLongDateString()
+        </li>
+        <li>
+            Date Added : @Model.DateAdded.Value.ToLongDateString()
+        </li>
+        @*<li>
+            Seasons: @Model.Serie.Seasons        
+            @if (Model.Serie.MySeasons != null)
+            {
+                @Model.Serie.MySeasons.Count().ToString()
+            }
+            else
+            {
+                <h4> Seasons: Nothing To Show</h4>
+            }
+        </li>*@
+    </ul>
+
+@if (Model.MySeasons == null)
+{
+    <h3>No Seasons Available!!</h3>
+}
+else
+{
+    <table class="table table-striped">
+
+        @foreach (var season in Model.MySeasons)
+        {
+        <tr>
+            @*<th>@Html.DisplayFor(modelItem => season.SeasonName)</th>*@
+            <th>@Html.ActionLink(season.SeasonName, "SeasonDetails", "Seasons", new { id = season.Id }, null)</th>
+        </tr>
+        }
+    </table>
+}
+
+
+<p>@Html.ActionLink("Back To Series", "Index")</p>
+
+@section scripts
+{
+    <script>
+
+
+
+    </script>
+}
+

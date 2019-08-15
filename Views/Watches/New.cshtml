@@ -1,0 +1,122 @@
+﻿
+@{
+    ViewBag.Title = "New";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>New Watch</h2>
+
+<form id="newWatch">
+    <div class="form-group">
+        <label>Viewer</label>
+        <div class="tt-container">
+            <input id="viewer" required data-rule-validViewer="true" type="text" name="viewer" value="" class="form-control" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Serie</label>
+        <div class="tt-container">
+            <input id="serie" required data-rule-atLeastOneSerie="true"type="text" name="serie" value="" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 col-sm-4">
+            <ul id="series" class="list-group"></ul>
+        </div>
+    </div>
+
+    <button class="btn btn primary">Submit</button>
+</form>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+            // model του client side.
+            var viewModel = {
+                serieIds: []
+            };
+
+            var viewers = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/viewers?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#viewer').typeahead({
+                minLength: 3,
+                highlight: true
+            },
+                {
+                    name: 'viewers',
+                    display: 'name',
+                    source: viewers
+                }).on("typeahead:select", function (e, viewer) {
+                    viewModel.viewerId = viewer.id;
+                });
+
+            var series = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                remote: {
+                    url: '/api/series?query=%QUERY',
+                    wildcard: '%QUERY'
+                }
+            });
+
+            $('#serie').typeahead({
+                minLength: 3,
+                highlight: true
+            },
+                {
+                    name: 'series',
+                    display: 'name',
+                    source: series
+                }).on("typeahead:select", function (e, serie) {
+                    $("#series").append("<li class='list-group-item'>" + serie.name + "</li>");
+                    $("#serie").typeahead("val", "");
+                    viewModel.serieIds.push(serie.id);
+                });
+
+            $.validator.addMethod("validViewer", function () {
+                return viewModel.viewerId && viewModel.viewerId !== 0;
+            }, "ENTER A VALID VIEWER");
+
+            $.validator.addMethod("atLeastOneSerie", function () {
+                return viewModel.serieIds.length > 0;
+            }, "ENTER A VALID Serie");
+
+            var validator = $("#newWatch").validate({
+                submitHandler: function (e) {
+                    e.preventDefault();
+
+                    $.ajax({
+                        url: "/api/watches",
+                        method: "post",
+                        data: viewModel
+                    })
+                        .done(function () {
+                            toastr.success("Watches succesfully submited");
+                            $("viewer").typeahead("val", "");
+                            $("serie").typeahead("val", "");
+                            $("series").empty();
+
+                            viewModel = { serieIds: [] };
+                            validator.resetForm();
+                        })
+                        .fail(function () {
+                            toastr.fail("Something went wrong");
+                            console.log("FAIL");
+                        });
+                    return false
+                }
+            });
+        });
+    </script>
+}

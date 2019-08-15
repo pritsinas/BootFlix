@@ -1,0 +1,48 @@
+﻿@{
+    ViewBag.Title = "Viewers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Viewers</h2>
+
+<table id="viewers" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Viewers</th>
+            @*<th>Discount Rate</th>*@
+            <th>Subscription Type</th>           
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+           let table = $("#viewers").DataTable({
+                ajax: {
+                    url: "/api/viewers",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                       
+                    },
+                    {
+                        data: "membershipType.subscriptionType"
+                    },
+                    {
+                        data: "id",
+                        
+                    }
+                ]
+            });
+
+        });
+    </script>
+}
+
+

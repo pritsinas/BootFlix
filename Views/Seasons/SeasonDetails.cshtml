@@ -1,0 +1,38 @@
+﻿@model BootFlixBC7.Models.Season
+@{
+                /**/
+
+                ViewBag.Title = "Details";
+                Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.SeasonName</h2>
+
+@if (Model.Episodes == null)
+{
+    <h3>No Episodes Available Yet!!</h3>
+}
+else
+{
+    <table class="table table-bordered">
+
+        <tr>
+            <td>Episode</td>
+            <td>Duration</td>
+        </tr>
+
+        @foreach (var episode in Model.Episodes)
+        {
+            <tr>
+                <td>
+                    @episode.Title
+                </td>
+                <td>
+                    @episode.Duration.TotalMinutes minutes
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+<p>@Html.ActionLink("Back To Details", "Details", "Series", new { id = Model.SerieId }, null)</p>

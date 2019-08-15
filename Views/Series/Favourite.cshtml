@@ -1,0 +1,29 @@
+﻿@model BootFlixBC7.ViewModels.FavouriteViewModel
+@{
+    ViewBag.Title = "Favourite";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{ 
+    var className = Model.Viewers.Count > 200 ? "popular" : null;
+}
+
+<h2 class="@className">@Model.Serie.Name</h2>
+
+@if (Model.Viewers.Count == 0)
+{
+    <text>No one has ever Viewed this Serie.</text>
+}
+else
+{
+    <ul>
+        @foreach (var viewer in Model.Viewers)
+        {
+            <li>@viewer.Name</li>
+        }
+    </ul>
+}
+
+
+
+
